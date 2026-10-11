@@ -98,6 +98,12 @@
 
         body.light-mode .header-posts { border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
 
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .header-posts h2 {
             margin: 0;
             font-size: 18px;
@@ -105,6 +111,24 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
         body.light-mode .header-posts h2 { color: #111; text-shadow: none; }
+
+        /* NÚT DẤU CỘNG THÊM BÀI VIẾT */
+        .add-post-toggle-btn {
+            background: #1db954;
+            color: #fff;
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 13px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .add-post-toggle-btn.show { display: inline-flex; }
+        .add-post-toggle-btn:hover { transform: scale(1.15); }
 
         .top-controls {
             display: flex;
@@ -136,16 +160,16 @@
 
         .control-btn:hover { transform: scale(1.15); }
 
-        /* KHUNG SOẠN THẢO DÀNH RIÊNG CHO CHỦ NHÂN (MẶC ĐỊNH ẨN) */
+        /* KHUNG SOẠN THẢO ẨN/HIỆN KHI BẤM DẤU CỘNG */
         .admin-panel {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.35);
             border: 1px dashed rgba(255, 255, 255, 0.4);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 15px;
             display: none;
         }
-        body.light-mode .admin-panel { background: rgba(255, 255, 255, 0.4); border-color: rgba(0,0,0,0.2); }
+        body.light-mode .admin-panel { background: rgba(255, 255, 255, 0.45); border-color: rgba(0,0,0,0.25); }
         .admin-panel.active { display: block; }
 
         .admin-panel input, .admin-panel textarea {
@@ -267,7 +291,6 @@
         body.light-mode .back-btn { background: rgba(255, 255, 255, 0.5); color: #222; }
         .back-btn:hover { background: rgba(0, 123, 255, 0.4); border-color: #007bff; }
 
-        /* NÚT LOGIN QUẢN TRỊ VIÊN Ở GÓC DƯỚI */
         .login-btn {
             background: rgba(255, 255, 255, 0.15);
             color: rgba(255, 255, 255, 0.7);
@@ -304,36 +327,38 @@
 
     <div class="container">
         <div class="header-posts">
-            <h2>📢 Tin tức & Bài viết</h2>
+            <div class="header-title-wrapper">
+                <h2>📢 Tin tức</h2>
+                <!-- NÚT DẤU CỘNG - CHỈ HIỆN KHI LOGIN THÀNH CÔNG -->
+                <button class="add-post-toggle-btn" id="addToggleBtn" onclick="toggleAdminPanel()" title="Thêm bài viết mới"><i class="fa-solid fa-plus"></i></button>
+            </div>
             <div class="top-controls">
                 <button class="control-btn" id="btn-theme" onclick="toggleTheme()" title="Đổi giao diện Sáng/Tối">🌙</button>
             </div>
         </div>
 
-        <!-- KHUNG SOẠN THẢO DÀNH RIÊNG CHO CHỦ NHÂN (Được bảo vệ bằng mật khẩu) -->
+        <!-- KHUNG SOẠN THẢO ẨN (BẬT KHI BẤM NÚT +) -->
         <div class="admin-panel" id="adminPanel">
-            <div style="font-size: 11px; font-weight: bold; color: #4dabf7; margin-bottom: 6px;"><i class="fa-solid fa-lock"></i> Khu vực đăng bài (Admin)</div>
+            <div style="font-size: 11px; font-weight: bold; color: #4dabf7; margin-bottom: 6px;"><i class="fa-solid fa-pen-nib"></i> Viết bài đăng mới</div>
             <input type="text" id="postTitleInput" placeholder="Tiêu đề bài viết...">
             <textarea id="postContentInput" placeholder="Nội dung bài viết..."></textarea>
-            <button class="post-submit-btn" onclick="addNewPost()">Đăng bài mới</button>
+            <button class="post-submit-btn" onclick="addNewPost()">Đăng bài</button>
         </div>
 
-        <!-- DANH SÁCH BÀI VIẾT HIỂN THỊ CHO MỌI NGƯỜI -->
+        <!-- DANH SÁCH BÀI VIẾT -->
         <div class="post-list" id="postListContainer">
-            <!-- Các bài viết sẽ tự động hiện ở đây -->
+            <!-- Bài viết tự động hiển thị ở đây -->
         </div>
 
         <div class="footer-nav">
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Trang chủ</a>
+            <a href="https://hoangztuank8-spec.github.io/personal-information/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Trang chủ</a>
             <button class="login-btn" id="loginBtn" onclick="verifyAdmin()"><i class="fa-solid fa-lock"></i> Login</button>
         </div>
     </div>
 
     <script>
-        // Mật khẩu quản trị của bạn
         const ADMIN_PASSWORD = "hoangzanh123"; 
 
-        // Dữ liệu bài viết mẫu ban đầu
         let posts = JSON.parse(localStorage.getItem('my_blog_posts')) || [
             {
                 id: 1,
@@ -369,11 +394,12 @@
 
         function verifyAdmin() {
             const loginBtn = document.getElementById('loginBtn');
+            const addToggleBtn = document.getElementById('addToggleBtn');
 
             if (isAdminLoggedIn) {
-                // Nếu đang ở trạng thái đăng nhập, bấm vào để ĐĂNG XUẤT
                 isAdminLoggedIn = false;
                 document.getElementById('adminPanel').classList.remove('active');
+                addToggleBtn.classList.remove('show');
                 loginBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Login`;
                 loginBtn.classList.remove('logged-in');
                 renderPosts();
@@ -384,14 +410,19 @@
             let pwd = prompt("Nhập mật khẩu quản trị viên:");
             if (pwd === ADMIN_PASSWORD) {
                 isAdminLoggedIn = true;
-                document.getElementById('adminPanel').classList.add('active');
+                addToggleBtn.classList.add('show'); // Hiển thị nút dấu cộng khi đăng nhập thành công
                 loginBtn.innerHTML = `<i class="fa-solid fa-lock-open"></i> Logout`;
                 loginBtn.classList.add('logged-in');
                 renderPosts();
-                alert("Đăng nhập quản trị thành công!");
+                alert("Đăng nhập thành công! Hãy bấm vào dấu cộng (+) phía trên để tạo bài viết.");
             } else if (pwd !== null) {
                 alert("Sai mật khẩu rồi bạn ơi!");
             }
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('active');
         }
 
         function addNewPost() {
@@ -413,12 +444,12 @@
                 content: content
             };
 
-            posts.unshift(newPost); // Thêm lên đầu danh sách
+            posts.unshift(newPost);
             localStorage.setItem('my_blog_posts', JSON.stringify(posts));
 
-            // Xóa sạch ô nhập
             document.getElementById('postTitleInput').value = "";
             document.getElementById('postContentInput').value = "";
+            document.getElementById('adminPanel').classList.remove('active'); // Đóng khung sau khi đăng xong
 
             renderPosts();
             alert("Đăng bài viết thành công!");
@@ -444,9 +475,7 @@
             }
         }
 
-        // Chạy lần đầu khi mở trang
         renderPosts();
     </script>
 </body>
-  </html>
-  
+</html>
