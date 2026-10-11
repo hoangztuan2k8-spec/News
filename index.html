@@ -334,7 +334,7 @@
         }
         body.light-mode .post-content { color: #333; }
 
-        /* KHUNG HIỂN THỊ ẢNH/VIDEO (2 TẤM 1 DÒNG ĐỂ TRÁNH KÉO DỌC) */
+        /* LƯỚI HIỂN THỊ ẢNH/VIDEO (2 TẤM 1 DÒNG) */
         .media-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -427,7 +427,7 @@
 </head>
 <body class="light-mode">
 
-    <!-- HỘP THOẠI NỔI ĐĂNG BÀI KÈM ẢNH/VIDEO -->
+    <!-- HỘP THOẠI NỔI ĐĂNG BÀI -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -467,7 +467,9 @@
     <script>
         const ADMIN_PASSWORD = "hoangzanh123"; 
 
-        let posts = JSON.parse(localStorage.getItem('my_blog_posts')) || [
+        // Khởi tạo danh sách bài viết, luôn giữ lại bài cũ nếu có sẵn trong localStorage
+        let savedPosts = localStorage.getItem('my_blog_posts');
+        let posts = savedPosts ? JSON.parse(savedPosts) : [
             {
                 id: 1,
                 date: "📅 11/10/2026",
@@ -492,17 +494,15 @@
                 const card = document.createElement('div');
                 card.className = 'post-card';
                 
-                // Tạo lưới hiển thị ảnh/video (2 tấm 1 dòng)
                 let mediaHtml = '';
                 if (post.media && post.media.length > 0) {
                     mediaHtml = '<div class="media-grid">';
                     post.media.forEach(url => {
-                        if (url) {
-                            // Kiểm tra nếu là video đuôi .mp4 hoặc link video
+                        if (url && url.trim() !== '') {
                             if (url.includes('.mp4') || url.includes('video')) {
-                                mediaHtml += `<video src="${url}" class="media-item" controls></video>`;
+                                mediaHtml += `<video src="${url.trim()}" class="media-item" controls></video>`;
                             } else {
-                                mediaHtml += `<img src="${url}" class="media-item" alt="media">`;
+                                mediaHtml += `<img src="${url.trim()}" class="media-item" alt="media">`;
                             }
                         }
                     });
@@ -569,4 +569,4 @@
             }
 
             const now = new Date();
-            const dateStr = `📅 ${String(
+            const dateStr = `📅 ${String
