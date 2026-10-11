@@ -467,7 +467,6 @@
     <script>
         const ADMIN_PASSWORD = "hoangzanh123"; 
 
-        // Khởi tạo danh sách bài viết, luôn giữ lại bài cũ nếu có sẵn trong localStorage
         let savedPosts = localStorage.getItem('my_blog_posts');
         let posts = savedPosts ? JSON.parse(savedPosts) : [
             {
@@ -569,4 +568,4 @@
             }
 
             const now = new Date();
-            const dateStr = `📅 ${String
+            const dateStr = `📅 ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.get
