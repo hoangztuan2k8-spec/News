@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes bgFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            background-image: url('https://cdn.discordapp.com/attachments/1343886719145213993/1557372250838270032/349ab2ad88ef3977285bcdf3568ae624.jpg?backend=b2&ex=6ac78f6f&is=6ac63def&hm=1d09d5e06b049ca6b8a8171001410ecd8274344e4c8a6b3f4dea7e17a44773e4&');
+            background-size: cover;          
+            background-position: center center; 
+            background-repeat: no-repeat;    
+            background-attachment: fixed;    
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            animation: bgFadeIn 1.2s ease-out forwards;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); 
+            z-index: 1;
+            transition: background 0.4s ease;
+        }
+
+        body.light-mode::before {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        @keyframes containerFadeIn {
+            0% { transform: scale(0.85) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .container {
+            width: 92%;
+            max-width: 560px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: rgba(20, 20, 25, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            text-align: left;
+            opacity: 0;
+            animation: containerFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+            transition: background 0.4s ease, border 0.4s ease;
+        }
+
+        body.light-mode .container {
+            background: rgba(255, 255, 255, 0.38);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .container::-webkit-scrollbar { width: 4px; }
+        .container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+        .header-posts {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        body.light-mode .header-posts { border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+
+        .header-posts h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        body.light-mode .header-posts h2 { color: #111; text-shadow: none; }
+
+        .top-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            outline: none;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        body.light-mode .control-btn {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: #222;
+        }
+
+        .control-btn:hover { transform: scale(1.15); }
+
+        /* KHUNG SOẠN THẢO DÀNH RIÊNG CHO CHỦ NHÂN (MẶC ĐỊNH ẨN) */
+        .admin-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        body.light-mode .admin-panel { background: rgba(255, 255, 255, 0.4); border-color: rgba(0,0,0,0.2); }
+        .admin-panel.active { display: block; }
+
+        .admin-panel input, .admin-panel textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 10px;
+            color: #fff;
+            font-size: 12px;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+            outline: none;
+            font-family: inherit;
+        }
+        body.light-mode .admin-panel input, body.light-mode .admin-panel textarea {
+            background: rgba(255, 255, 255, 0.6);
+            color: #111;
+            border-color: rgba(0,0,0,0.15);
+        }
+        .admin-panel textarea { resize: vertical; min-height: 70px; }
+
+        .post-submit-btn {
+            background: #1db954;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .post-submit-btn:hover { background: #1aa34a; }
+
+        /* DANH SÁCH BÀI VIẾT */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .post-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px 14px;
+            backdrop-filter: blur(4px);
+            position: relative;
+        }
+
+        body.light-mode .post-card {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .post-date {
+            font-size: 10px;
+            color: #4dabf7;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        body.light-mode .post-date { color: #0056b3; }
+
+        .post-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        body.light-mode .post-title { color: #111; }
+
+        .post-content {
+            font-size: 11.5px;
+            color: #e0e0e0;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+        body.light-mode .post-content { color: #333; }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.3);
+            color: #ffcccc;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        .delete-btn.show { display: inline-block; }
+        .delete-btn:hover { background: rgba(255, 0, 0, 0.6); color: #fff; }
+
+        .footer-nav {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .back-btn { background: rgba(255, 255, 255, 0.5); color: #222; }
+        .back-btn:hover { background: rgba(0, 123, 255, 0.4); border-color: #007bff; }
+
+        /* NÚT LOGIN QUẢN TRỊ VIÊN Ở GÓC DƯỚI */
+        .login-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        body.light-mode .login-btn {
+            background: rgba(255, 255, 255, 0.4);
+            color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .login-btn:hover {
+            background: rgba(0, 123, 255, 0.4);
+            color: #fff;
+            border-color: #007bff;
+        }
+        .login-btn.logged-in {
+            background: rgba(0, 123, 255, 0.5);
+            color: #fff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body class="light-mode">
+
+    <div class="container">
+        <div class="header-posts">
+            <h2>📢 Tin tức & Bài viết</h2>
+            <div class="top-controls">
+                <button class="control-btn" id="btn-theme" onclick="toggleTheme()" title="Đổi giao diện Sáng/Tối">🌙</button>
+            </div>
+        </div>
+
+        <!-- KHUNG SOẠN THẢO DÀNH RIÊNG CHO CHỦ NHÂN (Được bảo vệ bằng mật khẩu) -->
+        <div class="admin-panel" id="adminPanel">
+            <div style="font-size: 11px; font-weight: bold; color: #4dabf7; margin-bottom: 6px;"><i class="fa-solid fa-lock"></i> Khu vực đăng bài (Admin)</div>
+            <input type="text" id="postTitleInput" placeholder="Tiêu đề bài viết...">
+            <textarea id="postContentInput" placeholder="Nội dung bài viết..."></textarea>
+            <button class="post-submit-btn" onclick="addNewPost()">Đăng bài mới</button>
+        </div>
+
+        <!-- DANH SÁCH BÀI VIẾT HIỂN THỊ CHO MỌI NGƯỜI -->
+        <div class="post-list" id="postListContainer">
+            <!-- Các bài viết sẽ tự động hiện ở đây -->
+        </div>
+
+        <div class="footer-nav">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Trang chủ</a>
+            <button class="login-btn" id="loginBtn" onclick="verifyAdmin()"><i class="fa-solid fa-lock"></i> Login</button>
+        </div>
+    </div>
+
+    <script>
+        // Mật khẩu quản trị của bạn
+        const ADMIN_PASSWORD = "hoangzanh123"; 
+
+        // Dữ liệu bài viết mẫu ban đầu
+        let posts = JSON.parse(localStorage.getItem('my_blog_posts')) || [
+            {
+                id: 1,
+                date: "📅 11/10/2026",
+                title: "Chào mừng đến với trang tin tức của tôi!",
+                content: "Đây là nơi mình sẽ đăng tải các thông báo và chia sẻ hành trình lập trình của một starter dev. Hãy theo dõi thường xuyên nhé! ^^"
+            }
+        ];
+
+        let isAdminLoggedIn = false;
+
+        function renderPosts() {
+            const container = document.getElementById('postListContainer');
+            container.innerHTML = "";
+
+            if (posts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; font-size:11px; color:#ccc; padding:20px;">Chưa có bài viết nào được đăng.</div>`;
+                return;
+            }
+
+            posts.forEach((post) => {
+                const card = document.createElement('div');
+                card.className = 'post-card';
+                card.innerHTML = `
+                    <button class="delete-btn ${isAdminLoggedIn ? 'show' : ''}" onclick="deletePost(${post.id})">Xóa</button>
+                    <div class="post-date">${post.date}</div>
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-content">${post.content}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function verifyAdmin() {
+            const loginBtn = document.getElementById('loginBtn');
+
+            if (isAdminLoggedIn) {
+                // Nếu đang ở trạng thái đăng nhập, bấm vào để ĐĂNG XUẤT
+                isAdminLoggedIn = false;
+                document.getElementById('adminPanel').classList.remove('active');
+                loginBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Login`;
+                loginBtn.classList.remove('logged-in');
+                renderPosts();
+                alert("Đã đăng xuất khỏi chế độ quản trị!");
+                return;
+            }
+
+            let pwd = prompt("Nhập mật khẩu quản trị viên:");
+            if (pwd === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                document.getElementById('adminPanel').classList.add('active');
+                loginBtn.innerHTML = `<i class="fa-solid fa-lock-open"></i> Logout`;
+                loginBtn.classList.add('logged-in');
+                renderPosts();
+                alert("Đăng nhập quản trị thành công!");
+            } else if (pwd !== null) {
+                alert("Sai mật khẩu rồi bạn ơi!");
+            }
+        }
+
+        function addNewPost() {
+            const title = document.getElementById('postTitleInput').value.trim();
+            const content = document.getElementById('postContentInput').value.trim();
+
+            if (!title || !content) {
+                alert("Vui lòng nhập đầy đủ tiêu đề và nội dung!");
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = `📅 ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+
+            const newPost = {
+                id: Date.now(),
+                date: dateStr,
+                title: title,
+                content: content
+            };
+
+            posts.unshift(newPost); // Thêm lên đầu danh sách
+            localStorage.setItem('my_blog_posts', JSON.stringify(posts));
+
+            // Xóa sạch ô nhập
+            document.getElementById('postTitleInput').value = "";
+            document.getElementById('postContentInput').value = "";
+
+            renderPosts();
+            alert("Đăng bài viết thành công!");
+        }
+
+        function deletePost(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa bài viết này không?")) {
+                posts = posts.filter(p => p.id !== id);
+                localStorage.setItem('my_blog_posts', JSON.stringify(posts));
+                renderPosts();
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('btn-theme');
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                themeBtn.innerHTML = '🌙';
+            } else {
+                themeBtn.innerHTML = '☀️';
+            }
+        }
+
+        // Chạy lần đầu khi mở trang
+        renderPosts();
+    </script>
+</body>
+  </html>
+  
