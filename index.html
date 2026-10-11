@@ -112,23 +112,24 @@
         }
         body.light-mode .header-posts h2 { color: #111; text-shadow: none; }
 
-        /* NÚT DẤU CỘNG THÊM BÀI VIẾT */
+        /* NÚT DẤU CỘNG 10X XỊN XÒ */
         .add-post-toggle-btn {
-            background: #1db954;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
             color: #fff;
             border: none;
-            width: 26px;
-            height: 26px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             display: none;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .add-post-toggle-btn.show { display: inline-flex; }
-        .add-post-toggle-btn:hover { transform: scale(1.15); }
+        .add-post-toggle-btn:hover { transform: scale(1.2) rotate(90deg); }
 
         .top-controls {
             display: flex;
@@ -160,50 +161,131 @@
 
         .control-btn:hover { transform: scale(1.15); }
 
-        /* KHUNG SOẠN THẢO ẨN/HIỆN KHI BẤM DẤU CỘNG */
-        .admin-panel {
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px dashed rgba(255, 255, 255, 0.4);
+        /* KHUNG MODAL NỔI 10X ĐẸP MẮT */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 440px;
+            background: rgba(25, 25, 35, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
+        }
+
+        body.light-mode .modal-content {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 10px;
+        }
+        body.light-mode .modal-header { border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        body.light-mode .modal-header h3 { color: #111; }
+
+        .modal-close-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        body.light-mode .modal-close-btn { background: rgba(0, 0, 0, 0.1); color: #333; }
+        .modal-close-btn:hover { background: rgba(255, 0, 0, 0.4); color: #fff; }
+
+        .modal-content input, .modal-content textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             padding: 12px;
-            margin-bottom: 15px;
-            display: none;
-        }
-        body.light-mode .admin-panel { background: rgba(255, 255, 255, 0.45); border-color: rgba(0,0,0,0.25); }
-        .admin-panel.active { display: block; }
-
-        .admin-panel input, .admin-panel textarea {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 8px 10px;
             color: #fff;
-            font-size: 12px;
-            margin-bottom: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
             box-sizing: border-box;
             outline: none;
             font-family: inherit;
+            transition: all 0.3s;
         }
-        body.light-mode .admin-panel input, body.light-mode .admin-panel textarea {
+        body.light-mode .modal-content input, body.light-mode .modal-content textarea {
             background: rgba(255, 255, 255, 0.6);
             color: #111;
-            border-color: rgba(0,0,0,0.15);
+            border-color: rgba(0, 0, 0, 0.15);
         }
-        .admin-panel textarea { resize: vertical; min-height: 70px; }
+        .modal-content input:focus, .modal-content textarea:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+        .modal-content textarea { resize: vertical; min-height: 100px; }
 
         .post-submit-btn {
-            background: #1db954;
+            width: 100%;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
             color: #fff;
             border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
             cursor: pointer;
-            transition: background 0.2s;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            transition: all 0.3s;
         }
-        .post-submit-btn:hover { background: #1aa34a; }
+        .post-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46, 204, 113, 0.6); }
 
         /* DANH SÁCH BÀI VIẾT */
         .post-list {
@@ -215,19 +297,21 @@
         .post-card {
             background: rgba(0, 0, 0, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 12px 14px;
-            backdrop-filter: blur(4px);
+            border-radius: 16px;
+            padding: 14px 16px;
+            backdrop-filter: blur(6px);
             position: relative;
+            transition: transform 0.2s;
         }
+        .post-card:hover { transform: translateY(-2px); }
 
         body.light-mode .post-card {
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         .post-date {
-            font-size: 10px;
+            font-size: 10.5px;
             color: #4dabf7;
             font-weight: 700;
             margin-bottom: 4px;
@@ -235,33 +319,34 @@
         body.light-mode .post-date { color: #0056b3; }
 
         .post-title {
-            font-size: 14px;
+            font-size: 14.5px;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         body.light-mode .post-title { color: #111; }
 
         .post-content {
-            font-size: 11.5px;
+            font-size: 12px;
             color: #e0e0e0;
-            line-height: 1.4;
+            line-height: 1.5;
             white-space: pre-wrap;
         }
         body.light-mode .post-content { color: #333; }
 
         .delete-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 0, 0, 0.3);
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 0, 0, 0.25);
             color: #ffcccc;
             border: none;
-            border-radius: 4px;
-            padding: 2px 6px;
+            border-radius: 6px;
+            padding: 3px 8px;
             font-size: 10px;
             cursor: pointer;
             display: none;
+            transition: background 0.2s;
         }
         .delete-btn.show { display: inline-block; }
         .delete-btn:hover { background: rgba(255, 0, 0, 0.6); color: #fff; }
@@ -295,7 +380,7 @@
             background: rgba(255, 255, 255, 0.15);
             color: rgba(255, 255, 255, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
@@ -325,24 +410,29 @@
 </head>
 <body class="light-mode">
 
+    <!-- HỘP THOẠI SOẠN THẢO NỔI (MODAL) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-nib" style="color: #2ecc71;"></i> Đăng bài viết mới</h3>
+                <button class="modal-close-btn" onclick="toggleModal(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="text" id="postTitleInput" placeholder="Tiêu đề bài viết...">
+            <textarea id="postContentInput" placeholder="Nhập nội dung chia sẻ của bạn ở đây..."></textarea>
+            <button class="post-submit-btn" onclick="addNewPost()">Đăng ngay</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header-posts">
             <div class="header-title-wrapper">
                 <h2>📢 Tin tức</h2>
-                <!-- NÚT DẤU CỘNG - CHỈ HIỆN KHI LOGIN THÀNH CÔNG -->
-                <button class="add-post-toggle-btn" id="addToggleBtn" onclick="toggleAdminPanel()" title="Thêm bài viết mới"><i class="fa-solid fa-plus"></i></button>
+                <!-- NÚT DẤU CỘNG KÍCH HOẠT MODAL -->
+                <button class="add-post-toggle-btn" id="addToggleBtn" onclick="toggleModal(true)" title="Thêm bài viết mới"><i class="fa-solid fa-plus"></i></button>
             </div>
             <div class="top-controls">
                 <button class="control-btn" id="btn-theme" onclick="toggleTheme()" title="Đổi giao diện Sáng/Tối">🌙</button>
             </div>
-        </div>
-
-        <!-- KHUNG SOẠN THẢO ẨN (BẬT KHI BẤM NÚT +) -->
-        <div class="admin-panel" id="adminPanel">
-            <div style="font-size: 11px; font-weight: bold; color: #4dabf7; margin-bottom: 6px;"><i class="fa-solid fa-pen-nib"></i> Viết bài đăng mới</div>
-            <input type="text" id="postTitleInput" placeholder="Tiêu đề bài viết...">
-            <textarea id="postContentInput" placeholder="Nội dung bài viết..."></textarea>
-            <button class="post-submit-btn" onclick="addNewPost()">Đăng bài</button>
         </div>
 
         <!-- DANH SÁCH BÀI VIẾT -->
@@ -398,8 +488,8 @@
 
             if (isAdminLoggedIn) {
                 isAdminLoggedIn = false;
-                document.getElementById('adminPanel').classList.remove('active');
                 addToggleBtn.classList.remove('show');
+                toggleModal(false);
                 loginBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Login`;
                 loginBtn.classList.remove('logged-in');
                 renderPosts();
@@ -410,19 +500,23 @@
             let pwd = prompt("Nhập mật khẩu quản trị viên:");
             if (pwd === ADMIN_PASSWORD) {
                 isAdminLoggedIn = true;
-                addToggleBtn.classList.add('show'); // Hiển thị nút dấu cộng khi đăng nhập thành công
+                addToggleBtn.classList.add('show'); // Hiển thị nút dấu cộng lấp lánh
                 loginBtn.innerHTML = `<i class="fa-solid fa-lock-open"></i> Logout`;
                 loginBtn.classList.add('logged-in');
                 renderPosts();
-                alert("Đăng nhập thành công! Hãy bấm vào dấu cộng (+) phía trên để tạo bài viết.");
+                alert("Đăng nhập thành công! Bây giờ bạn có thể bấm vào nút dấu cộng (+) để mở hộp thoại viết bài.");
             } else if (pwd !== null) {
                 alert("Sai mật khẩu rồi bạn ơi!");
             }
         }
 
-        function toggleAdminPanel() {
-            const panel = document.getElementById('adminPanel');
-            panel.classList.toggle('active');
+        function toggleModal(isOpen) {
+            const modal = document.getElementById('modalOverlay');
+            if (isOpen) {
+                modal.classList.add('active');
+            } else {
+                modal.classList.remove('active');
+            }
         }
 
         function addNewPost() {
@@ -449,7 +543,7 @@
 
             document.getElementById('postTitleInput').value = "";
             document.getElementById('postContentInput').value = "";
-            document.getElementById('adminPanel').classList.remove('active'); // Đóng khung sau khi đăng xong
+            toggleModal(false); // Đóng hộp thoại nổi sau khi đăng
 
             renderPosts();
             alert("Đăng bài viết thành công!");
