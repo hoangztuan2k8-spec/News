@@ -112,7 +112,6 @@
         }
         body.light-mode .header-posts h2 { color: #111; text-shadow: none; }
 
-        /* NÚT DẤU CỘNG 10X XỊN XÒ */
         .add-post-toggle-btn {
             background: linear-gradient(135deg, #2ecc71, #27ae60);
             color: #fff;
@@ -161,7 +160,7 @@
 
         .control-btn:hover { transform: scale(1.15); }
 
-        /* KHUNG MODAL NỔI 10X ĐẸP MẮT */
+        /* HỘP THOẠI MODAL NỔI */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -188,12 +187,14 @@
         .modal-content {
             width: 90%;
             max-width: 440px;
-            background: rgba(25, 25, 35, 0.75);
+            max-height: 85vh;
+            overflow-y: auto;
+            background: rgba(25, 25, 35, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 24px;
-            padding: 24px;
+            padding: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             transform: scale(0.8) translateY(20px);
             transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -201,7 +202,7 @@
         }
 
         body.light-mode .modal-content {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
@@ -214,7 +215,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.15);
             padding-bottom: 10px;
         }
@@ -252,10 +253,10 @@
             background: rgba(0, 0, 0, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px 12px;
             color: #fff;
-            font-size: 13px;
-            margin-bottom: 12px;
+            font-size: 12.5px;
+            margin-bottom: 10px;
             box-sizing: border-box;
             outline: none;
             font-family: inherit;
@@ -270,14 +271,14 @@
             border-color: #2ecc71;
             box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
         }
-        .modal-content textarea { resize: vertical; min-height: 100px; }
+        .modal-content textarea { resize: vertical; min-height: 80px; }
 
         .post-submit-btn {
             width: 100%;
             background: linear-gradient(135deg, #2ecc71, #27ae60);
             color: #fff;
             border: none;
-            padding: 12px;
+            padding: 11px;
             border-radius: 12px;
             font-weight: 700;
             font-size: 13px;
@@ -301,9 +302,7 @@
             padding: 14px 16px;
             backdrop-filter: blur(6px);
             position: relative;
-            transition: transform 0.2s;
         }
-        .post-card:hover { transform: translateY(-2px); }
 
         body.light-mode .post-card {
             background: rgba(255, 255, 255, 0.35);
@@ -331,8 +330,26 @@
             color: #e0e0e0;
             line-height: 1.5;
             white-space: pre-wrap;
+            margin-bottom: 10px;
         }
         body.light-mode .post-content { color: #333; }
+
+        /* KHUNG HIỂN THỊ ẢNH/VIDEO (2 TẤM 1 DÒNG ĐỂ TRÁNH KÉO DỌC) */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .media-item {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0,0,0,0.3);
+        }
 
         .delete-btn {
             position: absolute;
@@ -410,15 +427,17 @@
 </head>
 <body class="light-mode">
 
-    <!-- HỘP THOẠI SOẠN THẢO NỔI (MODAL) -->
+    <!-- HỘP THOẠI NỔI ĐĂNG BÀI KÈM ẢNH/VIDEO -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-pen-nib" style="color: #2ecc71;"></i> Đăng bài viết mới</h3>
+                <h3><i class="fa-solid fa-photo-film" style="color: #2ecc71;"></i> Đăng bài viết mới</h3>
                 <button class="modal-close-btn" onclick="toggleModal(false)"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <input type="text" id="postTitleInput" placeholder="Tiêu đề bài viết...">
-            <textarea id="postContentInput" placeholder="Nhập nội dung chia sẻ của bạn ở đây..."></textarea>
+            <textarea id="postContentInput" placeholder="Nhập nội dung chia sẻ..."></textarea>
+            <input type="text" id="postMedia1" placeholder="🔗 Link ảnh / video 1 (URL)...">
+            <input type="text" id="postMedia2" placeholder="🔗 Link ảnh / video 2 (URL)...">
             <button class="post-submit-btn" onclick="addNewPost()">Đăng ngay</button>
         </div>
     </div>
@@ -427,7 +446,6 @@
         <div class="header-posts">
             <div class="header-title-wrapper">
                 <h2>📢 Tin tức</h2>
-                <!-- NÚT DẤU CỘNG KÍCH HOẠT MODAL -->
                 <button class="add-post-toggle-btn" id="addToggleBtn" onclick="toggleModal(true)" title="Thêm bài viết mới"><i class="fa-solid fa-plus"></i></button>
             </div>
             <div class="top-controls">
@@ -437,7 +455,7 @@
 
         <!-- DANH SÁCH BÀI VIẾT -->
         <div class="post-list" id="postListContainer">
-            <!-- Bài viết tự động hiển thị ở đây -->
+            <!-- Bài viết tự động hiển thị -->
         </div>
 
         <div class="footer-nav">
@@ -454,7 +472,8 @@
                 id: 1,
                 date: "📅 11/10/2026",
                 title: "Chào mừng đến với trang tin tức của tôi!",
-                content: "Đây là nơi mình sẽ đăng tải các thông báo và chia sẻ hành trình lập trình của một starter dev. Hãy theo dõi thường xuyên nhé! ^^"
+                content: "Đây là nơi mình đăng tải các thông báo và chia sẻ hành trình lập trình của một starter dev. Hãy theo dõi thường xuyên nhé! ^^",
+                media: []
             }
         ];
 
@@ -472,11 +491,30 @@
             posts.forEach((post) => {
                 const card = document.createElement('div');
                 card.className = 'post-card';
+                
+                // Tạo lưới hiển thị ảnh/video (2 tấm 1 dòng)
+                let mediaHtml = '';
+                if (post.media && post.media.length > 0) {
+                    mediaHtml = '<div class="media-grid">';
+                    post.media.forEach(url => {
+                        if (url) {
+                            // Kiểm tra nếu là video đuôi .mp4 hoặc link video
+                            if (url.includes('.mp4') || url.includes('video')) {
+                                mediaHtml += `<video src="${url}" class="media-item" controls></video>`;
+                            } else {
+                                mediaHtml += `<img src="${url}" class="media-item" alt="media">`;
+                            }
+                        }
+                    });
+                    mediaHtml += '</div>';
+                }
+
                 card.innerHTML = `
                     <button class="delete-btn ${isAdminLoggedIn ? 'show' : ''}" onclick="deletePost(${post.id})">Xóa</button>
                     <div class="post-date">${post.date}</div>
                     <div class="post-title">${post.title}</div>
                     <div class="post-content">${post.content}</div>
+                    ${mediaHtml}
                 `;
                 container.appendChild(card);
             });
@@ -500,11 +538,11 @@
             let pwd = prompt("Nhập mật khẩu quản trị viên:");
             if (pwd === ADMIN_PASSWORD) {
                 isAdminLoggedIn = true;
-                addToggleBtn.classList.add('show'); // Hiển thị nút dấu cộng lấp lánh
+                addToggleBtn.classList.add('show'); 
                 loginBtn.innerHTML = `<i class="fa-solid fa-lock-open"></i> Logout`;
                 loginBtn.classList.add('logged-in');
                 renderPosts();
-                alert("Đăng nhập thành công! Bây giờ bạn có thể bấm vào nút dấu cộng (+) để mở hộp thoại viết bài.");
+                alert("Đăng nhập thành công! Bấm vào dấu cộng (+) để viết bài kèm ảnh/video.");
             } else if (pwd !== null) {
                 alert("Sai mật khẩu rồi bạn ơi!");
             }
@@ -522,6 +560,8 @@
         function addNewPost() {
             const title = document.getElementById('postTitleInput').value.trim();
             const content = document.getElementById('postContentInput').value.trim();
+            const media1 = document.getElementById('postMedia1').value.trim();
+            const media2 = document.getElementById('postMedia2').value.trim();
 
             if (!title || !content) {
                 alert("Vui lòng nhập đầy đủ tiêu đề và nội dung!");
@@ -529,47 +569,4 @@
             }
 
             const now = new Date();
-            const dateStr = `📅 ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-
-            const newPost = {
-                id: Date.now(),
-                date: dateStr,
-                title: title,
-                content: content
-            };
-
-            posts.unshift(newPost);
-            localStorage.setItem('my_blog_posts', JSON.stringify(posts));
-
-            document.getElementById('postTitleInput').value = "";
-            document.getElementById('postContentInput').value = "";
-            toggleModal(false); // Đóng hộp thoại nổi sau khi đăng
-
-            renderPosts();
-            alert("Đăng bài viết thành công!");
-        }
-
-        function deletePost(id) {
-            if (confirm("Bạn có chắc chắn muốn xóa bài viết này không?")) {
-                posts = posts.filter(p => p.id !== id);
-                localStorage.setItem('my_blog_posts', JSON.stringify(posts));
-                renderPosts();
-            }
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const themeBtn = document.getElementById('btn-theme');
-            body.classList.toggle('light-mode');
-            
-            if (body.classList.contains('light-mode')) {
-                themeBtn.innerHTML = '🌙';
-            } else {
-                themeBtn.innerHTML = '☀️';
-            }
-        }
-
-        renderPosts();
-    </script>
-</body>
-</html>
+            const dateStr = `📅 ${String(
